@@ -36,6 +36,12 @@ describe('resolveDay — basics', () => {
     expect(r.lastOut).toBe('2026-06-01T18:04:00+06:00');
   });
 
+  it('treats an omitted punches array as no punches', () => {
+    const r = resolveDay({ date: D, shift: NINE_TO_SIX, policy: { tzOffsetMinutes: 360 } } as ResolveDayInput);
+    expect(r.status).toBe('absent');
+    expect(r.flags).toEqual(['no-punches']);
+  });
+
   it('derives the tz offset from the first punch when policy omits it (+05:30)', () => {
     const r = run([at('09:08:00', D, '+05:30'), at('18:00:00', D, '+05:30')], NINE_TO_SIX);
     expect(r.status).toBe('present');

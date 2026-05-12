@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveDay } from './resolve-day.js';
 import { summarize } from './summarize.js';
-import type { ResolveDayInput } from './types.js';
+import type { DayResult, DayStatus, ResolveDayInput } from './types.js';
 
 const shift = { start: '09:00', end: '18:00', graceIn: 10 } as const;
 
@@ -49,5 +49,27 @@ describe('summarize', () => {
     expect(s.days).toBe(0);
     expect(s.attendanceRate).toBeNull();
     expect(s.flagCounts).toEqual({});
+  });
+
+  it('counts half-day and incomplete statuses', () => {
+    const mk = (status: DayStatus): DayResult => ({
+      date: '2026-06-01',
+      status,
+      firstIn: null,
+      lastOut: null,
+      workedMinutes: 0,
+      lateByMinutes: 0,
+      earlyOutMinutes: 0,
+      otMinutes: 0,
+      spansMidnight: false,
+      breaksDeducted: 0,
+      flags: [],
+      segments: [],
+    });
+    const s = summarize([mk('half-day'), mk('incomplete'), mk('incomplete')]);
+    expect(s.halfDays).toBe(1);
+    expect(s.incompleteDays).toBe(2);
+    // half-day counts as attended; incomplete does not — attended 1 / expected 3
+    expect(s.attendanceRate).toBeCloseTo(1 / 3);
   });
 });
