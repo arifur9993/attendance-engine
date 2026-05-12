@@ -1,0 +1,24 @@
+name: Feature request
+description: Propose a new capability (within scope — this is a calculator, not a platform).
+labels: ['enhancement']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before opening: see `VISION.md` → Non-goals. The engine deals in time — minutes, hours, classifications, violations, flags. It will not gain leave-balance accounting, money/payroll pricing, device protocols, or UI beyond the headless React layer.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What can't you express today? What real situation is it?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API
+      description: Function signature / new policy field / new flag, and example input → output.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

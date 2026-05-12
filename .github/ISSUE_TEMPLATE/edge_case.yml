@@ -1,0 +1,25 @@
+name: Edge case
+description: A real-world scenario that should be a permanent test case.
+labels: ['edge-case']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The `cases/` matrix is the project's whole promise. If you hit a weird real-world situation — overnight + DST, forgotten clock-out, unsynced devices, an unusual roster — describe it here (or open a PR adding the fixture directly; that's even better).
+  - type: textarea
+    id: scenario
+    attributes:
+      label: The scenario
+      description: What happened, in plain words.
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Proposed fixture input
+      render: json
+  - type: textarea
+    id: expected
+    attributes:
+      label: Proposed expected output (and why it's correct)
+      render: json

@@ -1,0 +1,29 @@
+name: Jurisdiction rule pack
+description: Propose (or volunteer to contribute) a rule pack — FLSA, a US state, NYC Fair Workweek, EU Working Time Directive, UK, Australia, a Canadian province, …
+labels: ['rule-pack']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Rule packs are declarative data, not code. A merged pack needs: the rule definitions, `cases/` fixtures covering each rule (at least one passing + one violating example each), and a citation to the statute / regulation / agency fact sheet for every rule. Unsourced rules won't be merged.
+  - type: input
+    id: jurisdiction
+    attributes:
+      label: Jurisdiction
+      placeholder: 'e.g. California, NYC Fair Workweek (fast food), EU Working Time Directive'
+    validations:
+      required: true
+  - type: textarea
+    id: rules
+    attributes:
+      label: Rules to encode
+      description: Overtime thresholds, meal/rest requirements, rest-between-shifts, predictability pay, rounding constraints, … — with a source link for each.
+    validations:
+      required: true
+  - type: checkboxes
+    id: offer
+    attributes:
+      label: Are you offering to contribute it?
+      options:
+        - label: Yes, I'll open a PR with the pack + fixtures + citations.
+        - label: No, just flagging that it's needed.

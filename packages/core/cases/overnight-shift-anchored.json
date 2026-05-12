@@ -1,0 +1,28 @@
+{
+  "name": "22:00-06:00 night shift; clock-out lands the next calendar day, attributed to this duty",
+  "input": {
+    "date": "2026-06-01",
+    "punches": [
+      { "at": "2026-06-01T21:54:00+06:00" },
+      { "at": "2026-06-02T06:18:00+06:00" }
+    ],
+    "shift": { "start": "22:00", "end": "06:00" },
+    "policy": { "pairing": "first-last", "midnightCutover": "shift-anchored" }
+  },
+  "expected": {
+    "date": "2026-06-01",
+    "status": "present",
+    "firstIn": "2026-06-01T21:54:00+06:00",
+    "lastOut": "2026-06-02T06:18:00+06:00",
+    "workedMinutes": 504,
+    "lateByMinutes": 0,
+    "earlyOutMinutes": 0,
+    "otMinutes": 18,
+    "spansMidnight": true,
+    "breaksDeducted": 0,
+    "flags": [],
+    "segments": [
+      { "in": "2026-06-01T21:54:00+06:00", "out": "2026-06-02T06:18:00+06:00", "minutes": 504 }
+    ]
+  }
+}

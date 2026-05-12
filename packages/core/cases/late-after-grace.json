@@ -1,0 +1,28 @@
+{
+  "name": "arrived 13 minutes late, past a 10-minute grace window",
+  "input": {
+    "date": "2026-06-01",
+    "punches": [
+      { "at": "2026-06-01T09:23:00+06:00" },
+      { "at": "2026-06-01T18:00:00+06:00" }
+    ],
+    "shift": { "start": "09:00", "end": "18:00", "graceIn": 10 },
+    "policy": { "pairing": "first-last" }
+  },
+  "expected": {
+    "date": "2026-06-01",
+    "status": "late",
+    "firstIn": "2026-06-01T09:23:00+06:00",
+    "lastOut": "2026-06-01T18:00:00+06:00",
+    "workedMinutes": 517,
+    "lateByMinutes": 13,
+    "earlyOutMinutes": 0,
+    "otMinutes": 0,
+    "spansMidnight": false,
+    "breaksDeducted": 0,
+    "flags": [],
+    "segments": [
+      { "in": "2026-06-01T09:23:00+06:00", "out": "2026-06-01T18:00:00+06:00", "minutes": 517 }
+    ]
+  }
+}

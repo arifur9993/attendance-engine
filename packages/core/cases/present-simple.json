@@ -1,0 +1,28 @@
+{
+  "name": "on time, single in/out pair, small overtime past shift end",
+  "input": {
+    "date": "2026-06-01",
+    "punches": [
+      { "at": "2026-06-01T08:57:00+06:00" },
+      { "at": "2026-06-01T18:04:00+06:00" }
+    ],
+    "shift": { "start": "09:00", "end": "18:00", "graceIn": 10 },
+    "policy": { "pairing": "first-last" }
+  },
+  "expected": {
+    "date": "2026-06-01",
+    "status": "present",
+    "firstIn": "2026-06-01T08:57:00+06:00",
+    "lastOut": "2026-06-01T18:04:00+06:00",
+    "workedMinutes": 547,
+    "lateByMinutes": 0,
+    "earlyOutMinutes": 0,
+    "otMinutes": 4,
+    "spansMidnight": false,
+    "breaksDeducted": 0,
+    "flags": [],
+    "segments": [
+      { "in": "2026-06-01T08:57:00+06:00", "out": "2026-06-01T18:04:00+06:00", "minutes": 547 }
+    ]
+  }
+}

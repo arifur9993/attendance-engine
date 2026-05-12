@@ -1,0 +1,30 @@
+{
+  "name": "odd punch count (forgot to clock out); policy closes the open segment at scheduled shift end",
+  "input": {
+    "date": "2026-06-01",
+    "punches": [
+      { "at": "2026-06-01T08:58:00+06:00" },
+      { "at": "2026-06-01T13:01:00+06:00" },
+      { "at": "2026-06-01T14:02:00+06:00" }
+    ],
+    "shift": { "start": "09:00", "end": "18:00", "graceIn": 10 },
+    "policy": { "pairing": "in-out-pairs", "treatMissingOutAs": "shift-end" }
+  },
+  "expected": {
+    "date": "2026-06-01",
+    "status": "present",
+    "firstIn": "2026-06-01T08:58:00+06:00",
+    "lastOut": "2026-06-01T18:00:00+06:00",
+    "workedMinutes": 481,
+    "lateByMinutes": 0,
+    "earlyOutMinutes": 0,
+    "otMinutes": 0,
+    "spansMidnight": false,
+    "breaksDeducted": 0,
+    "flags": ["missing-out-resolved"],
+    "segments": [
+      { "in": "2026-06-01T08:58:00+06:00", "out": "2026-06-01T13:01:00+06:00", "minutes": 243 },
+      { "in": "2026-06-01T14:02:00+06:00", "out": "2026-06-01T18:00:00+06:00", "minutes": 238 }
+    ]
+  }
+}

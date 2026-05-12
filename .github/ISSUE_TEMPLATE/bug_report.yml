@@ -1,0 +1,42 @@
+name: Bug report
+description: Something produced the wrong result.
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A bug without a reproducible input is hard to act on. Please give us the exact `ResolveDayInput` (or whatever you called) and what you expected vs what you got. If you can, this becomes a permanent `cases/` fixture.
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: '@attendance-engine/core@0.1.0'
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Input
+      description: The exact arguments you passed (punches, shift, policy, …).
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected output
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual output
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Which jurisdiction/policy this models, why the expected value is right, links to statute, etc.
