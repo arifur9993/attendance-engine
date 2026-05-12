@@ -37,9 +37,10 @@ describe('resolveDay — basics', () => {
   });
 
   it('derives the tz offset from the first punch when policy omits it (+05:30)', () => {
-    const r = run([at('09:30:00', D, '+05:30'), at('18:00:00', D, '+05:30')], NINE_TO_SIX);
+    const r = run([at('09:08:00', D, '+05:30'), at('18:00:00', D, '+05:30')], NINE_TO_SIX);
     expect(r.status).toBe('present');
-    expect(r.firstIn).toBe('2026-06-01T09:30:00+05:30');
+    expect(r.firstIn).toBe('2026-06-01T09:08:00+05:30');
+    expect(r.lastOut).toBe('2026-06-01T18:00:00+05:30');
   });
 });
 
