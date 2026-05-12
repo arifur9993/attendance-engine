@@ -9,9 +9,7 @@
 
 Every HR / workforce / time-tracking product reimplements this logic — and most get the edge cases wrong (shifts that cross midnight, someone who forgot to clock out, punches recorded out of order, rotating rosters, grace-period boundaries). `attendance-engine` is that logic, extracted, hardened, and exhaustively tested, with **no opinion about your database, your UI, or your framework**.
 
-- **`@attendance-engine/core`** — TypeScript, zero deps. This package.
-- **`@attendance-engine/react`** — headless hooks for timesheet/approval UIs *(planned)*.
-- **`arits/attendance-engine`** — PHP port, identical API shape *(planned)*.
+**`@attendance-engine/core`** — TypeScript, zero dependencies.
 
 ---
 
@@ -76,8 +74,8 @@ Every one of these has a test in [`cases/`](cases/):
 
 - **Overnight shifts** — `start: '22:00', end: '06:00'`. The clock-out lands on the next calendar day but belongs to *this* duty date. Policy chooses `shift-anchored` vs `calendar-day` cutover.
 - **Missing punch** — odd number of punches (forgot to clock out). `treatMissingOutAs: 'absent' | 'shift-end' | 'half-day' | 'flag-only'`.
-- **Inverted clocks** — punch-out timestamped before punch-in. Flagged (`'inverted-clock'`), never crashes.
-- **Duplicate punches** — two reads within N seconds (biometric double-tap). Deduped.
+- **Duplicate punches** — two reads within N seconds (biometric double-tap). Deduped and flagged.
+- **Inverted clocks** — a punch-out timestamped before its punch-in (unsynced device clocks). Detection lands once punches can carry explicit `in`/`out` labels *(planned)*; today the engine never produces negative durations.
 - **Punch before shift start** — early arrival. Counts as work? Counts toward OT? Policy decides.
 - **Multiple in/out pairs** — lunch, prayer break, stepped out for a call. Segment-based accounting.
 - **Flexible shifts** — any 8h window counts; the engine slides the window.

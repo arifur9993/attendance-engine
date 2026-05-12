@@ -1,4 +1,4 @@
-/** Pairing raw punches into in/out segments: sorting, de-duplication, inversion handling. */
+/** Pairing raw punches into in/out segments: sorting, de-duplication, segment construction. */
 
 import type { Flag, PunchPairing } from './types.js';
 import { minutesBetween } from './time.js';
@@ -47,25 +47,24 @@ export function dedupeAndSort(punches: PunchInstant[], dedupeSeconds: number): {
   return { punches: out, hadDuplicates };
 }
 
-function makeSegment(a: PunchInstant, b: PunchInstant): { seg: RawSegment; inverted: boolean } {
-  const inverted = b.ms < a.ms;
-  const inMs = inverted ? b.ms : a.ms;
-  const outMs = inverted ? a.ms : b.ms;
-  // When inverted we still record the *intended* in/out order (a→b) but clamp minutes to 0.
-  const minutes = inverted ? 0 : Math.max(0, minutesBetween(inMs, outMs));
+function segmentBetween(a: PunchInstant, b: PunchInstant): RawSegment {
+  // `dedupeAndSort` guarantees ascending order, so `b.ms >= a.ms` always holds here.
   return {
-    seg: {
-      inMs: a.ms,
-      outMs: b.ms,
-      inOffset: a.offsetMinutes,
-      outOffset: b.offsetMinutes,
-      minutes,
-    },
-    inverted,
+    inMs: a.ms,
+    outMs: b.ms,
+    inOffset: a.offsetMinutes,
+    outOffset: b.offsetMinutes,
+    minutes: Math.max(0, minutesBetween(a.ms, b.ms)),
   };
 }
 
-/** Build segments from de-duplicated, sorted punches according to the pairing strategy. */
+/**
+ * Build segments from de-duplicated, sorted punches according to the pairing strategy.
+ *
+ * Note: detection of *inverted* clock events (a punch-out timestamped before its punch-in,
+ * e.g. from unsynced device clocks) requires punches to carry an explicit `in`/`out` type;
+ * that's a planned enhancement. v0.1 pairs strictly by chronological order.
+ */
 export function buildSegments(sorted: PunchInstant[], pairing: PunchPairing): SegmentBuildResult {
   const flags: Flag[] = [];
 
@@ -86,17 +85,19 @@ export function buildSegments(sorted: PunchInstant[], pairing: PunchPairing): Se
     }
     const first = sorted[0]!;
     const last = sorted[sorted.length - 1]!;
-    const { seg, inverted } = makeSegment(first, last);
-    if (inverted) flags.push('inverted-clock');
-    return { segments: [seg], flags, oddPunchUnresolved: false, danglingInMs: null, danglingInOffset: null };
+    return {
+      segments: [segmentBetween(first, last)],
+      flags,
+      oddPunchUnresolved: false,
+      danglingInMs: null,
+      danglingInOffset: null,
+    };
   }
 
   // pairing === 'in-out-pairs'
   const segments: RawSegment[] = [];
   for (let i = 0; i + 1 < sorted.length; i += 2) {
-    const { seg, inverted } = makeSegment(sorted[i]!, sorted[i + 1]!);
-    if (inverted && !flags.includes('inverted-clock')) flags.push('inverted-clock');
-    segments.push(seg);
+    segments.push(segmentBetween(sorted[i]!, sorted[i + 1]!));
   }
   const oddPunchUnresolved = sorted.length % 2 === 1;
   const dangling = oddPunchUnresolved ? sorted[sorted.length - 1]! : null;

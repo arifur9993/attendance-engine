@@ -228,14 +228,15 @@ export function resolveDay(input: ResolveDayInput): DayResult {
     standardDayMinutes: policy.standardDayMinutes,
   });
 
-  // Status.
+  // Status. (The two `absent` outcomes — no punches at all, and `treatMissingOutAs: 'absent'`
+  // with nothing usable — are handled by early returns above; here `absent` is unreachable.)
   let status: DayStatus;
   if (contextStatus) {
     status = contextStatus;
-  } else if (segments.length === 0) {
-    status = 'absent';
   } else if (policy.treatMissingOutAs === 'half-day' && built.oddPunchUnresolved) {
     status = 'half-day';
+  } else if (segments.length === 0) {
+    status = 'incomplete';
   } else if (incomplete) {
     status = 'incomplete';
   } else if (shift.minHalfDayMinutes !== undefined && workedMinutes < shift.minHalfDayMinutes) {
