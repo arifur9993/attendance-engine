@@ -1,6 +1,6 @@
 {
   "name": "@attendance-engine/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pure-function workforce attendance resolver — shifts, breaks, overtime, overnight handling, rosters. Zero dependencies, framework-agnostic.",
   "keywords": [
     "attendance",
