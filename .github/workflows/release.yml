@@ -9,17 +9,13 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 permissions:
   contents: write
   pull-requests: write
-
-# Version-only mode: this workflow opens / updates the "chore: version packages" PR.
-# Publishing to npm is done manually from a local terminal:
-#   cd packages/core && npm publish --access public
-# (Browser-based OTP works locally; CI couldn't bypass 2FA reliably for the org scope.)
-# To re-enable CI publish later, add a `publish: pnpm changeset publish` input to the step below
-# and ensure NPM_TOKEN is a granular token with Read+Write on @attendance-engine and Bypass 2FA.
+  id-token: write    # required for npm Trusted Publisher (OIDC)
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    # MUST match the "Environment name" set in the npm Trusted Publisher config.
+    environment: release
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -27,13 +23,17 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r build
-      - name: Create version PR
+      - name: Create release PR or publish
         uses: changesets/action@v1
         with:
+          publish: pnpm changeset publish
           version: pnpm changeset version
           commit: 'chore: version packages'
           title: 'chore: version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No NPM_TOKEN. npm publish uses OIDC via the Trusted Publisher config.
+          NPM_CONFIG_PROVENANCE: 'true'
