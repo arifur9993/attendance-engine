@@ -105,6 +105,49 @@ const exact = resolveDay(input);                                  // 547 min wor
 const rounded = applyRounding(exact, { unit: 15, mode: 'down' }); // 540 min worked, 0 min OT
 ```
 
+## `evaluateBreakCompliance({ result, rules, waivers? }): BreakComplianceResult`
+
+Analyse meal and rest period compliance for a resolved day under a jurisdiction rule pack. v0.4 ships the **California** pack (`BREAK_RULE_SETS.CA`). Define custom packs with `defineBreakRuleSet`.
+
+Best results require `policy.pairing: 'in-out-pairs'` (so the engine sees actual gaps between segments as meal candidates). With `'first-last'` pairing the function returns `status: 'unknown'` and a note rather than guessing.
+
+```ts
+import { resolveDay, evaluateBreakCompliance, BREAK_RULE_SETS } from '@attendance-engine/core';
+
+const result = resolveDay({ /* ... */, policy: { pairing: 'in-out-pairs' } });
+const compliance = evaluateBreakCompliance({ result, rules: BREAK_RULE_SETS.CA });
+// {
+//   meals: [{ index: 1, status: 'late', startedAtWorkedHour: 5.5, durationMin: 30, premiumOwed: true }, { index: 2, status: 'not-required', ... }],
+//   rest: { expected: 2, status: 'compliant', premiumOwed: false },
+//   premiumsOwed: { meal: 1, rest: 0 },  // hours at regular rate — caller prices to money
+//   waiverIssues: [],
+//   presumptionRisk: 'high',             // CA rebuttable-presumption flag
+//   notes: []
+// }
+```
+
+Premium values are **hours at the regular rate** — the engine never deals in money. `presumptionRisk` is the Donohue v. AMN signal: `high` when the time record on its face shows a violation.
+
+Rule pack types & registry:
+
+```ts
+import { BREAK_RULE_SETS, defineBreakRuleSet } from '@attendance-engine/core';
+
+BREAK_RULE_SETS.CA;             // bundled
+defineBreakRuleSet({            // custom (extends a bundled pack)
+  id: 'acme-ca',
+  label: 'ACME (CA-derived, 5.5h meal start)',
+  source: 'internal policy v3',
+  extends: 'CA',
+  overrides: { meal: { mustStartByWorkedHour: 5.5 } },
+});
+```
+
+Limitations of v0.4:
+- Meal detection uses gaps between worked segments — accurate when employees punch in/out for meals.
+- Rest detection is heuristic (most policies don't punch out for paid rest). Counts gaps of 5–24 minutes as candidate rests.
+- Overtime classification (daily/weekly/double-time/7th-day) and Fair Workweek (clopening, predictability pay) are scheduled for subsequent minor versions.
+
 ## `generateRoster(pattern: RosterPattern, startDate: string, days: number): ShiftAssignment[]`
 
 Produce one assignment per calendar date, cycling through `pattern`.

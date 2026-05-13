@@ -13,6 +13,8 @@ export { resolveRange } from './resolve-range.js';
 export { generateRoster } from './roster.js';
 export { summarize } from './summarize.js';
 export { applyRounding } from './rounding.js';
+export { evaluateBreakCompliance } from './break-compliance.js';
+export { BREAK_RULE_SETS, CA_BREAK_RULES, defineBreakRuleSet } from './rule-packs.js';
 
 export { TimeParseError } from './time.js';
 
@@ -21,6 +23,19 @@ export type {
   RoundingOptions,
   RoundableField,
 } from './rounding.js';
+
+export type {
+  BreakRuleSet,
+  BundledBreakRuleSetId,
+} from './rule-packs.js';
+
+export type {
+  MealPeriodAnalysis,
+  RestPeriodAnalysis,
+  WaiverRef,
+  EvaluateBreakComplianceInput,
+  BreakComplianceResult,
+} from './break-compliance.js';
 
 export type {
   Punch,
