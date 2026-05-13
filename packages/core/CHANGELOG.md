@@ -1,5 +1,11 @@
 # @attendance-engine/core
 
+## 0.2.1
+
+### Patch Changes
+
+- 12958d4: fix repository.url normalisation
+
 ## 0.2.0
 
 ### Minor Changes
