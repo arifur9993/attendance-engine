@@ -84,6 +84,27 @@ Resolve one duty day.
 
 Aggregate counts and totals: `days`, `presentDays`, `lateDays`, `absentDays`, `halfDays`, `leaveDays`, `holidayDays`, `weekendDays`, `incompleteDays`, `totalWorkedMinutes`, `totalOtMinutes`, `totalLateMinutes`, `totalEarlyOutMinutes`, `attendanceRate` (`(present + late + half) / (days - leave - holiday - weekend)`, or `null` if the denominator is 0), `flagCounts`.
 
+## `applyRounding(result: DayResult, opts: RoundingOptions): DayResult`
+
+Return a copy of `result` with selected minute fields rounded to a unit. Useful for producing a rounded view of an exact-minute result *without losing the exact one* — keep both, prove your rounding is neutral.
+
+`RoundingOptions`:
+
+| field | type | default | meaning |
+|---|---|---|---|
+| `unit` | `number` | — | Rounding unit in minutes (positive integer). `1` is a no-op. |
+| `mode` | `'nearest' \| 'up' \| 'down'` | `'nearest'` | Direction. |
+| `applyTo` | `('workedMinutes' \| 'otMinutes' \| 'lateByMinutes' \| 'earlyOutMinutes' \| 'breaksDeducted')[]` | `['workedMinutes', 'otMinutes']` | Which fields to round. `lateByMinutes` / `earlyOutMinutes` are excluded by default because many policies require employee-favourable handling of lateness even when worked time is rounded. |
+
+Throws if `unit` is not a positive integer. Does not touch `firstIn` / `lastOut` / `segments`.
+
+```ts
+import { resolveDay, applyRounding } from '@attendance-engine/core';
+
+const exact = resolveDay(input);                                  // 547 min worked, 4 min OT
+const rounded = applyRounding(exact, { unit: 15, mode: 'down' }); // 540 min worked, 0 min OT
+```
+
 ## `generateRoster(pattern: RosterPattern, startDate: string, days: number): ShiftAssignment[]`
 
 Produce one assignment per calendar date, cycling through `pattern`.

@@ -12,8 +12,15 @@ export { resolveDay } from './resolve-day.js';
 export { resolveRange } from './resolve-range.js';
 export { generateRoster } from './roster.js';
 export { summarize } from './summarize.js';
+export { applyRounding } from './rounding.js';
 
 export { TimeParseError } from './time.js';
+
+export type {
+  RoundingMode,
+  RoundingOptions,
+  RoundableField,
+} from './rounding.js';
 
 export type {
   Punch,
